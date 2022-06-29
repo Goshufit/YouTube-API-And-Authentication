@@ -21,8 +21,8 @@
     <section>
         <div class="container">
             <p>Log In With Google</p>
-            <button class="btn red" id="authorize-button">Log In</button>
-            <button class="btn red" id="signout-button">Log Out</button>
+            <button onclick="authenticate().then(loadClient)">authorize and load</button>
+            <button onclick="execute()">execute</button>
             <br>
             <div id="content">
                 <div class="row">
@@ -45,8 +45,49 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script src="script.js"></script>
-<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function()"></script>
+    <script src="script.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+        /**
+         * Sample JavaScript code for youtube.channels.list
+         * See instructions for running APIs Explorer code samples locally:
+         * https://developers.google.com/explorer-help/code-samples#javascript
+         */
+
+        function authenticate() {
+            return gapi.auth2.getAuthInstance()
+                .signIn({ scope: "https://www.googleapis.com/auth/youtube.readonly" })
+                .then(function () { console.log("Sign-in successful"); },
+                    function (err) { console.error("Error signing in", err); });
+        }
+        function loadClient() {
+            gapi.client.setApiKey("AIzaSyCENLgaM3Yxuawm4y-eGiKql4U9QX5PbJw");
+            return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+                .then(function () { console.log("GAPI client loaded for API"); },
+                    function (err) { console.error("Error loading GAPI client for API", err); });
+        }
+        // Make sure the client is loaded and sign-in is complete before calling this method.
+        function execute() {
+            return gapi.client.youtube.channels.list({
+                "part": [
+                    "snippet,contentDetails,statistics"
+                ],
+                "id": [
+                    "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+                ]
+            })
+                .then(function (response) {
+                    // Handle the results here (response.result has the parsed body).
+                    console.log("Response", response);
+                },
+                    function (err) { console.error("Execute error", err); });
+        }
+        gapi.load("client:auth2", function () {
+            gapi.auth2.init({ client_id: "418459077117-pchij1fu3469ktv49k3an6du5oc8vlko.apps.googleusercontent.com" });
+        });
+    </script>
+
+
 
 
 </body>

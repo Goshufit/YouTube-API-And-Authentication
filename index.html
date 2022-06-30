@@ -5,8 +5,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Data</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+        #content,
+        #authorize-button,
+        #signout-button {
+          display: none
+        }
+      </style>
+    <title>YouTube Data</title>
 </head>
 
 <body>
@@ -21,8 +28,10 @@
     <section>
         <div class="container">
             <p>Log In With Google</p>
-            <button onclick="authenticate().then(loadClient)">authorize and load</button>
-            <button onclick="execute()">execute</button>
+            <!--<button class="btn red" id="authorize-button">Log In</button>
+            <button class="btn red" id="signout-button">Log Out</button>-->
+            <button onclick="authenticate().then(loadClient)" class="btn red" id="authorize-button">Log In</button>
+            <button class="btn red" id="signout-button">Log Out</button>
             <br>
             <div id="content">
                 <div class="row">
@@ -30,7 +39,8 @@
                         <form id="channel-form">
                             <div class="input-field col s6">
                                 <input type="text" placeholder="Enter Channel Name" id="channel-input">
-                                <input type="submit" value="Get Channel Data" class="btn grey lighten-2">
+                                <input onclick="execute()" type="submit" value="Get Channel Data"
+                                    class="btn grey lighten-2">
                             </div>
                         </form>
                     </div>

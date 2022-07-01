@@ -71,8 +71,8 @@ function handleSignoutClick() {
 
 //Display channel data
 function showChannelData(data) {
-const channelData = document.getElementById('channel-data');
-channelData.innerHTML = data;
+    const channelData = document.getElementById('channel-data');
+    channelData.innerHTML = data;
 }
 
 //Get channel form API
@@ -81,23 +81,65 @@ function getChannel(channel) {
         part: 'snippet, contentDetails, statistics',
         forUsername: channel
     })
-    .then(response => {
-        console.log(response)
-        const channel = response.result.items[0]
+        .then(response => {
+            console.log(response)
+            const channel = response.result.items[0]
 
-        const output = `
+            const output = `
         <ul class="collection"
         <li class ="collection-item">Title: ${channel.snippet.title}</li>
         <li class ="collection-item">ID: ${channel.id}</li>
-        <li class ="collection-item">Subscribers: ${channel.statistics.subdcriberCount}</li>
-        <li class ="collection-item">Views: ${channel.statistics.viewCount}</li>
-        <li class ="collection-item">Videos: ${channel.statistics.videoCount}</li>
+        <li class ="collection-item">Subscribers: ${numberWithCommas(channel.statistics.subdcriberCount)}</li>
+        <li class ="collection-item">Views: ${numberWithCommas(channel.statistics.viewCount)}</li>
+        <li class ="collection-item">Videos: ${numberWithCommas(channel.statistics.videoCount)}</li>
         </ul>
         <p>${channel.snippet.description}</p>
         <hr>
         <a class="btn grey darken-2" target="blank" href="http://youtube.com/${channel.snippet.customUrl}">Visit Channel</a>
         `;
-showChannelData(output);
-    })
-    .catch(err => alert('No Channel By That Name'));
+            showChannelData(output);
+
+            const playListId = channel.contentDetails.relatedPlaylists.uploads;
+            requestVideoPlaylist(playListId);
+        })
+        .catch(err => alert('No Channel By That Name'));
 }
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+
+function requestVideoPlayList(playListId) {
+    const requestOptions = {
+        playListId: playListId,
+        part: 'snippet',
+        maxResults: 10
+    }
+
+    const request = gapi.client.youtube.playlistItems.list(requestOptions);
+
+    request.execute(response => {
+        console.log(response);
+        const playListItems = response.result.items;
+        if (playListItems) {
+            let output = '<br><h4 class="center-align">Latest Videos</h4>';
+
+            //Loop through videos and append output
+            playListItems.forEach(item => {
+                const videoId = item.snippet.resourceId.videoId;
+
+                output += `
+                <div class="col s3">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                `
+            });
+
+            // Output videos
+            videoContainer.innerHTML = output;
+        } else {
+            videoContainer.innerHTML = 'No Uploaded Videos'
+        }
+    });
+} 

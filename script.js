@@ -12,6 +12,15 @@ const videoContainer = document.getElementById('video-container');
 
 const defaultChannel = 'goshufit';
 
+//Form submit and change channel
+channelForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const channel = channelInput.value;
+
+    getChannel(channel);
+})
+
 // Load auth2 library
 function handleClientLoad() {
     //The load() method loads data from a server and puts the returned data into the selected element.
@@ -88,7 +97,7 @@ function getChannel(channel) {
         <hr>
         <a class="btn grey darken-2" target="blank" href="http://youtube.com/${channel.snippet.customUrl}">Visit Channel</a>
         `;
-
+showChannelData(output);
     })
     .catch(err => alert('No Channel By That Name'));
 }

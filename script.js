@@ -12,7 +12,7 @@ const videoContainer = document.getElementById('video-container');
 
 const defaultChannel = 'goshufit';
 
-//Form submit and change channel
+Form submit and change channel
 channelForm.addEventListener('submit', e => {
     e.preventDefault();
 
@@ -86,7 +86,7 @@ function getChannel(channel) {
             const channel = response.result.items[0]
 
             const output = `
-        <ul class="collection"
+        <ul class="collection">
         <li class ="collection-item">Title: ${channel.snippet.title}</li>
         <li class ="collection-item">ID: ${channel.id}</li>
         <li class ="collection-item">Subscribers: ${numberWithCommas(channel.statistics.subdcriberCount)}</li>
